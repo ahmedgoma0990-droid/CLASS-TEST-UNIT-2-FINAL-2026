@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AJYAL AL MAREFAAH INTERNATIONAL SCHOOL - English Test</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #1a365d; /* أزرق داكن */
+            --accent-color: #d69e2e;  /* ذهبي */
+            --bg-color: #f0f4f8;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --hover-color: #ebf4ff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Baloo 2', cursive;
+        }
+
+        /* Navbar & Branding */
+        .custom-navbar {
+            background: linear-gradient(135deg, var(--primary-color), #2a5298);
+            color: white;
+            padding: 15px 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .custom-navbar h3 { margin: 0; font-weight: 800; letter-spacing: 0.5px; }
+        .custom-navbar p { margin: 0; font-size: 0.9rem; opacity: 0.8; }
+
+        /* Screens */
+        .screen { display: none; flex: 1; padding: 30px 15px; }
+        .screen.active { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+        /* Start Screen Card */
+        .start-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            border-top: 5px solid var(--accent-color);
+            text-align: center;
+        }
+        .start-card h1 { color: var(--primary-color); font-weight: 800; margin-bottom: 10px; }
+        
+        .form-control, .form-select {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e0;
+            font-size: 1rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(26, 54, 93, 0.25);
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, var(--primary-color), #2a5298);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(26, 54, 93, 0.3);
+            color: var(--accent-color);
+        }
+
+        /* Quiz Layout - Full Width */
+        .quiz-container {
+            width: 100%;
+            max-width: 1400px; /* عرض كبير جداً للشاشات العريضة */
+            margin: 0 auto;
+        }
+
+        /* Progress Bar */
+        .progress-wrapper {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        .progress-bar-custom {
+            height: 12px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--accent-color), #f6ad55);
+            transition: width 0.4s ease;
+        }
+
+        /* Reading Passage */
+        .reading-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-left: 6px solid var(--primary-color);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        .reading-section h4 {
+            color: var(--primary-color);
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Question Card */
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* إخفاء وإظهار الأسئلة */
+        .slide { display: none; }
+        .slide.active { 
+            display: block; 
+            animation: fadeIn 0.4s ease-out; 
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        /* Custom Radio Buttons */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 1.1rem;
+        }
+        .option-label:hover { background-color: var(--hover-color); border-color: #bee3f8; }
+        .option-label input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+        .option-label input[type="radio"]:checked + span {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Text Inputs */
+        .text-input-custom {
+            border: none;
+            border-bottom: 2px solid #cbd5e0;
+            border-radius: 0;
+            padding: 10px;
+            font-size: 1.1rem;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+        .text-input-custom:focus {
+            border-bottom-color: var(--accent-color);
+            background: white;
+            box-shadow: none;
+            outline: none;
+        }
+        .word-bank {
+            background: #ebf8ff;
+            border: 2px dashed #90cdf4;
+            border-radius: 10px;
+            padding: 15px;
+            font-weight: 600;
+            color: #2b6cb0;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Navigation Buttons */
+        .nav-btns {
+            margin-top: 25px;
+            display: flex;
+            gap: 15px;
+        }
+        .btn-prev {
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .btn-prev:hover { background: #cbd5e0; color: #2d3748; }
+        .btn-next { flex: 1; }
+        
+        /* Result Certificate */
+        .certificate-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 700px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            border: 8px solid var(--primary-color);
+            border-radius: 20px;
+            position: relative;
+        }
+        .certificate-card::before {
+            content: '';
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            pointer-events: none;
+        }
+        .cert-logo { font-size: 1.8rem; color: var(--primary-color); font-weight: 800; margin-bottom: 5px; line-height: 1.2;}
+        .cert-title { color: var(--accent-color); font-size: 1.5rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+        .cert-score {
+            font-size: 4rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+        .cert-footer {
+            margin-top: 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #4a5568;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR (School Name Updated) -->
+    <nav class="custom-navbar d-flex justify-content-between align-items-center">
+        <div>
+            <h3>AJYAL AL MAREFAAH INTERNATIONAL SCHOOL</h3>
+            <p>English Department</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <span class="badge bg-warning text-dark px-3 py-2 fs-6 rounded-pill">Unit 2 Assessment</span>
+        </div>
+    </nav>
+
+    <!-- SCREEN 1: START -->
+    <div id="start-screen" class="screen active">
+        <div class="start-card">
+            <h1>Welcome to the Test</h1>
+            <p class="text-muted mb-4">Please enter your details below to begin your assessment.</p>
+            
+            <div class="mb-4 text-start">
+                <label class="form-label fw-bold">Student Full Name</label>
+                <input type="text" id="student-name" class="form-control" placeholder="e.g. Ahmed Ali" required>
+            </div>
+            
+            <div class="mb-4 text-start">
+                <label class="form-label fw-bold">Class</label>
+                <select id="student-class" class="form-select">
+                    <option value="">-- Select your class --</option>
+                    <option value="5B">Class 5B</option>
+                    <option value="5D">Class 5D</option>
+                    <option value="5F">Class 5F</option>
+                </select>
+            </div>
+            
+            <button class="btn btn-custom mt-3" onclick="startQuiz()">Start Test</button>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: QUIZ -->
+    <div id="quiz-screen" class="screen">
+        <div class="quiz-container">
+            
+            <!-- Progress Header -->
+            <div class="progress-wrapper d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold text-primary">Question <span id="current-q-num">1</span> <span class="text-muted fs-6">of 37</span></h5>
+                <div style="width: 60%;">
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-custom" id="progress-bar" role="progressbar" style="width: 0%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reading Passage (Fixed for first 7 questions) -->
+            <div id="reading-passage" class="reading-section" style="display: none;">
+                <h4>Thomas Edison: The Great Inventor</h4>
+                <p>Thomas Edison was one of the most famous inventors in history. He was born in Ohio, USA, in 1847. When he was a young boy, he loved to ask questions about everything. His teacher thought he asked too many questions and got angry with him, so his mother took him out of school and taught him at home.</p>
+                <p>Edison had a problem with his hearing, but he did not let that stop him. He worked very hard all his life. He is famous for inventing the light bulb. But he also invented the phonograph (a machine that plays music) and an early type of movie camera. People called him "The Wizard of Menlo Park" because of his amazing inventions.</p>
+                <p>Edison always said, "Genius is one percent inspiration and ninety-nine percent perspiration." This means that success is mostly about hard work, not just being smart. Thomas Edison died in 1931, but his inventions changed the world forever.</p>
+            </div>
+
+            <!-- Question Card -->
+            <div class="question-card">
+                <form id="quiz-form" onsubmit="event.preventDefault();">
+                    
+                    <!-- ================= READING (Q1 - Q7) ================= -->
+                    <div class="slide active" data-index="0">
+                        <div class="question-text">1. Where was Thomas Edison born?</div>
+                        <label class="option-label"><input type="radio" name="r1" value="a"> <span>a) In London</span></label>
+                        <label class="option-label"><input type="radio" name="r1" value="b"> <span>b) In Ohio, USA</span></label>
+                        <label class="option-label"><input type="radio" name="r1" value="c"> <span>c) In Paris</span></label>
+                    </div>
+                    <div class="slide" data-index="1">
+                        <div class="question-text">2. What did his mother do when his teacher got angry with him?</div>
+                        <label class="option-label"><input type="radio" name="r2" value="a"> <span>a) She sent him to another school.</span></label>
+                        <label class="option-label"><input type="radio" name="r2" value="b"> <span>b) She punished him.</span></label>
+                        <label class="option-label"><input type="radio" name="r2" value="c"> <span>c) She taught him at home.</span></label>
+                    </div>
+                    <div class="slide" data-index="2">
+                        <div class="question-text">3. What does the word "perspiration" mean in the text?</div>
+                        <label class="option-label"><input type="radio" name="r3" value="a"> <span>a) Hard work</span></label>
+                        <label class="option-label"><input type="radio" name="r3" value="b"> <span>b) Sleeping a lot</span></label>
+                        <label class="option-label"><input type="radio" name="r3" value="c"> <span>c) Watching movies</span></label>
+                    </div>
+                    <div class="slide" data-index="3">
+                        <div class="question-text">4. Thomas Edison had no hearing problems.</div>
+                        <label class="option-label"><input type="radio" name="r4" value="true"> <span>True</span></label>
+                        <label class="option-label"><input type="radio" name="r4" value="false"> <span>False</span></label>
+                    </div>
+                    <div class="slide" data-index="4">
+                        <div class="question-text">5. He loved to ask questions when he was a young boy.</div>
+                        <label class="option-label"><input type="radio" name="r5" value="true"> <span>True</span></label>
+                        <label class="option-label"><input type="radio" name="r5" value="false"> <span>False</span></label>
+                    </div>
+                    <div class="slide" data-index="5">
+                        <div class="question-text">6. He invented the light bulb and the phonograph.</div>
+                        <label class="option-label"><input type="radio" name="r6" value="true"> <span>True</span></label>
+                        <label class="option-label"><input type="radio" name="r6" value="false"> <span>False</span></label>
+                    </div>
+                    <div class="slide" data-index="6">
+                        <div class="question-text">7. Edison believed that success is only about being smart.</div>
+                        <label class="option-label"><input type="radio" name="r7" value="true"> <span>True</span></label>
+                        <label class="option-label"><input type="radio" name="r7" value="false"> <span>False</span></label>
+                    </div>
+
+                    <!-- ================= VOCABULARY (Q8 - Q16) ================= -->
+                    <!-- Fill in blanks -->
+                    <div class="slide" data-index="7">
+                        <div class="question-text">8. Fill in the blank:</div>
+                        <div class="word-bank">Oddity • supernatural • scholarship • replenish • curiosities</div>
+                        <p class="fs-5">The old museum was full of strange <input type="text" class="form-control text-input-custom d-inline-block w-50 mx-2" name="v1" placeholder="Write here..."> , like a two-headed coin.</p>
+                    </div>
+                    <div class="slide" data-index="8">
+                        <div class="question-text">9. Fill in the blank:</div>
+                        <div class="word-bank">Oddity • supernatural • scholarship • replenish • curiosities</div>
+                        <p class="fs-5">Nobody in the village could explain the <input type="text" class="form-control text-input-custom d-inline-block w-50 mx-2" name="v2" placeholder="Write here..."> lights that appeared in the sky.</p>
+                    </div>
+                    <div class="slide" data-index="9">
+                        <div class="question-text">10. Fill in the blank:</div>
+                        <div class="word-bank">Oddity • supernatural • scholarship • replenish • curiosities</div>
+                        <p class="fs-5">Sara won a <input type="text" class="form-control text-input-custom d-inline-block w-50 mx-2" name="v3" placeholder="Write here..."> to study at the best school.</p>
+                    </div>
+                    <div class="slide" data-index="10">
+                        <div class="question-text">11. Fill in the blank:</div>
+                        <div class="word-bank">Oddity • supernatural • scholarship • replenish • curiosities</div>
+                        <p class="fs-5">We must <input type="text" class="form-control text-input-custom d-inline-block w-50 mx-2" name="v4" placeholder="Write here..."> our water bottles before the walk.</p>
+                    </div>
+                    <div class="slide" data-index="11">
+                        <div class="question-text">12. Fill in the blank:</div>
+                        <div class="word-bank">Oddity • supernatural • scholarship • replenish • curiosities</div>
+                        <p class="fs-5">A giraffe in the city is an <input type="text" class="form-control text-input-custom d-inline-block w-50 mx-2" name="v5" placeholder="Write here..."> — you don't see that every day.</p>
+                    </div>
+
+                    <!-- Synonyms & Antonyms -->
+                    <div class="slide" data-index="12">
+                        <div class="question-text">13. Choose the Synonym of <strong>Remarkable</strong>:</div>
+                        <label class="option-label"><input type="radio" name="v6" value="ordinary"> <span>ordinary</span></label>
+                        <label class="option-label"><input type="radio" name="v6" value="amazing"> <span>amazing</span></label>
+                        <label class="option-label"><input type="radio" name="v6" value="boring"> <span>boring</span></label>
+                    </div>
+                    <div class="slide" data-index="13">
+                        <div class="question-text">14. Choose the Antonym of <strong>Ambitious</strong>:</div>
+                        <label class="option-label"><input type="radio" name="v7" value="lazy"> <span>lazy</span></label>
+                        <label class="option-label"><input type="radio" name="v7" value="determined"> <span>determined</span></label>
+                    </div>
+                    <div class="slide" data-index="14">
+                        <div class="question-text">15. Choose the Synonym of <strong>Humble</strong>:</div>
+                        <label class="option-label"><input type="radio" name="v8" value="proud"> <span>proud</span></label>
+                        <label class="option-label"><input type="radio" name="v8" value="modest"> <span>modest</span></label>
+                    </div>
+                    <div class="slide" data-index="15">
+                        <div class="question-text">16. Choose the Antonym of <strong>Diverse</strong>:</div>
+                        <label class="option-label"><input type="radio" name="v9" value="similar"> <span>similar</span></label>
+                        <label class="option-label"><input type="radio" name="v9" value="various"> <span>various</span></label>
+                    </div>
+                    <div class="slide" data-index="16">
+                        <div class="question-text">17. Choose the Antonym of <strong>Complain</strong>:</div>
+                        <label class="option-label"><input type="radio" name="v10" value="praise"> <span>praise</span></label>
+                        <label class="option-label"><input type="radio" name="v10" value="whine"> <span>whine</span></label>
+                    </div>
+
+                    <!-- Verbs V2 / V3 -->
+                    <div class="slide" data-index="17">
+                        <div class="question-text">18. Write the correct forms for: <strong>Write</strong></div>
+                        <div class="mb-3"><label class="form-label text-muted">V2 (Past)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v11_v2" placeholder="e.g. went"></div>
+                        <div><label class="form-label text-muted">V3 (Past Participle)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v11_v3" placeholder="e.g. gone"></div>
+                    </div>
+                    <div class="slide" data-index="18">
+                        <div class="question-text">19. Write the correct forms for: <strong>Buy</strong></div>
+                        <div class="mb-3"><label class="form-label text-muted">V2 (Past)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v12_v2" placeholder="V2..."></div>
+                        <div><label class="form-label text-muted">V3 (Past Participle)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v12_v3" placeholder="V3..."></div>
+                    </div>
+                    <div class="slide" data-index="19">
+                        <div class="question-text">20. Write the correct forms for: <strong>Know</strong></div>
+                        <div class="mb-3"><label class="form-label text-muted">V2 (Past)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v13_v2" placeholder="V2..."></div>
+                        <div><label class="form-label text-muted">V3 (Past Participle)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v13_v3" placeholder="V3..."></div>
+                    </div>
+                    <div class="slide" data-index="20">
+                        <div class="question-text">21. Write the correct forms for: <strong>Make</strong></div>
+                        <div class="mb-3"><label class="form-label text-muted">V2 (Past)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v14_v2" placeholder="V2..."></div>
+                        <div><label class="form-label text-muted">V3 (Past Participle)</label><input type="text" class="form-control form-control-lg text-input-custom" name="v14_v3" placeholder="V3..."></div>
+                    </div>
+
+                    <!-- ================= GRAMMAR (Q22 - Q37) ================= -->
+                    <div class="slide" data-index="21">
+                        <div class="question-text">22. My brother usually ____ up early, but yesterday he ____ until ten.</div>
+                        <label class="option-label"><input type="radio" name="g1" value="a"> <span>a) wakes / slept</span></label>
+                        <label class="option-label"><input type="radio" name="g1" value="b"> <span>b) woke / sleeps</span></label>
+                    </div>
+                    <div class="slide" data-index="22">
+                        <div class="question-text">23. ____ she ____ her homework every evening? — Yes, she does.</div>
+                        <label class="option-label"><input type="radio" name="g2" value="a"> <span>a) Do / do</span></label>
+                        <label class="option-label"><input type="radio" name="g2" value="b"> <span>b) Does / do</span></label>
+                    </div>
+                    <div class="slide" data-index="23">
+                        <div class="question-text">24. We ____ to the museum last week, but we ____ not see the new hall.</div>
+                        <label class="option-label"><input type="radio" name="g3" value="a"> <span>a) go / do</span></label>
+                        <label class="option-label"><input type="radio" name="g3" value="b"> <span>b) went / did</span></label>
+                    </div>
+                    <div class="slide" data-index="24">
+                        <div class="question-text">25. The train ____ at 7 o'clock every morning, so we ____ at the station at 6:45 yesterday.</div>
+                        <label class="option-label"><input type="radio" name="g4" value="a"> <span>a) leaves / arrived</span></label>
+                        <label class="option-label"><input type="radio" name="g4" value="b"> <span>b) left / arrive</span></label>
+                    </div>
+
+                    <div class="slide" data-index="25">
+                        <div class="question-text">26. If you ____ a plant, it ____.</div>
+                        <div class="d-flex gap-3">
+                            <input type="text" class="form-control form-control-lg text-input-custom" name="g5_a" placeholder="not/water">
+                            <input type="text" class="form-control form-control-lg text-input-custom" name="g5_b" placeholder="die">
+                        </div>
+                    </div>
+                    <div class="slide" data-index="26">
+                        <div class="question-text">27. If she ____ hard, she ____ good marks.</div>
+                        <div class="d-flex gap-3">
+                            <input type="text" class="form-control form-control-lg text-input-custom" name="g6_a" placeholder="study">
+                            <input type="text" class="form-control form-control-lg text-input-custom" name="g6_b" placeholder="get">
+                        </div>
+                    </div>
+                    <div class="slide" data-index="27">
+                        <div class="question-text">28. Don't worry — I ____ you with your project tomorrow.</div>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g7" placeholder="help">
+                    </div>
+                    <div class="slide" data-index="28">
+                        <div class="question-text">29. If you study hard, you ____ the test.</div>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g8" placeholder="pass">
+                    </div>
+
+                    <div class="slide" data-index="29">
+                        <div class="question-text">30. Rewrite in Present Continuous (Affirmative):<br><small class="text-muted fs-6">"She reads a book."</small></div>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g9" placeholder="Write the full sentence here...">
+                    </div>
+                    <div class="slide" data-index="30">
+                        <div class="question-text">31. Rewrite in Present Continuous (Negative):<br><small class="text-muted fs-6">"They play football."</small></div>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g10" placeholder="Write the full sentence here...">
+                    </div>
+                    <div class="slide" data-index="31">
+                        <div class="question-text">32. Rewrite in Present Continuous (Interrogative):<br><small class="text-muted fs-6">"He writes a letter."</small></div>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g11" placeholder="Write the full sentence here...">
+                    </div>
+                    <div class="slide" data-index="32">
+                        <div class="question-text">33. Rewrite in Present Continuous (WH-Question: When):<br><small class="text-muted fs-6">"You watch TV."</small></div>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g12" placeholder="Write the full sentence here...">
+                    </div>
+
+                    <div class="slide" data-index="33">
+                        <div class="question-text">34. Rewrite with correct punctuation:</div>
+                        <p class="fs-5 text-muted mb-3">if you mix red and blue you get purple</p>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g13" placeholder="Write the full sentence here...">
+                    </div>
+                    <div class="slide" data-index="34">
+                        <div class="question-text">35. Rewrite with correct punctuation:</div>
+                        <p class="fs-5 text-muted mb-3">my friend sara lives in cairo</p>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g14" placeholder="Write the full sentence here...">
+                    </div>
+                    <div class="slide" data-index="35">
+                        <div class="question-text">36. Rewrite with correct punctuation:</div>
+                        <p class="fs-5 text-muted mb-3">where is the library</p>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g15" placeholder="Write the full sentence here...">
+                    </div>
+                    <div class="slide" data-index="36">
+                        <div class="question-text">37. Rewrite with correct punctuation:</div>
+                        <p class="fs-5 text-muted mb-3">i have a cat a dog and a rabbit</p>
+                        <input type="text" class="form-control form-control-lg text-input-custom w-100" name="g16" placeholder="Write the full sentence here...">
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- Navigation -->
+            <div class="nav-btns">
+                <button type="button" class="btn btn-prev" id="btn-prev" onclick="prevQuestion()" style="display: none;">⬅ Previous</button>
+                <button type="button" class="btn btn-custom btn-next" id="btn-next" onclick="nextQuestion()">Next Question ➡</button>
+                <button type="button" class="btn btn-custom btn-next" id="btn-submit" onclick="submitQuiz()" style="display: none; background: linear-gradient(135deg, #2b6cb0, #2c5282);">Submit Test 🚀</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- SCREEN 3: RESULT CERTIFICATE -->
+    <div id="result-screen" class="screen">
+        <div class="certificate-card">
+            <!-- اسم المدرسة في الشهادة -->
+            <div class="cert-logo">AJYAL AL MAREFAAH<br><span class="fs-5 text-muted">INTERNATIONAL SCHOOL</span></div>
+            <div class="cert-title">Certificate of Completion</div>
+            
+            <p class="fs-5 mb-1 text-muted">This is to certify that</p>
+            <h2 class="fw-bold text-dark mb-3" id="res-name" style="font-size: 2.5rem;">Student Name</h2>
+            
+            <p class="fs-5 text-muted">Class: <strong id="res-class" class="text-dark"></strong></p>
+            <p class="fs-5 text-muted">has successfully completed the Unit 2 English Test.</p>
+            
+            <div class="d-flex justify-content-center align-items-center gap-2 mt-4">
+                <span class="fs-4 fw-bold text-muted">Final Score:</span>
+                <div class="cert-score"><span id="res-score">0</span><span class="fs-2 text-muted"> / 10</span></div>
+            </div>
+            
+            <p class="text-success fw-bold mt-3"><i class="bi bi-check-circle-fill"></i> Results sent successfully to the teacher.</p>
+            
+            <!-- اسم المعلم في الشهادة -->
+            <div class="cert-footer">
+                Prepared by: <strong>Mr. Ahmed Gomaa</strong><br>
+                <small class="text-muted">English Department</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylkPTZ022cZ1JiKr_58Ufswl5Xj248eLphTLE57CpDlAysqONg0vTdDotYbk--Pvm_/exec";
+
+        let studentData = { name: "", className: "" };
+        let currentQIndex = 0;
+        const totalQuestions = 37;
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnSubmit = document.getElementById('btn-submit');
+        const progressBar = document.getElementById('progress-bar');
+        const readingPassage = document.getElementById('reading-passage');
+
+        function startQuiz() {
+            const name = document.getElementById('student-name').value.trim();
+            const className = document.getElementById('student-class').value;
+
+            if (!name || !className) {
+                alert("Please enter your name and select your class.");
+                return;
+            }
+
+            studentData.name = name;
+            studentData.className = className;
+
+            document.getElementById('start-screen').classList.remove('active');
+            document.getElementById('quiz-screen').classList.add('active');
+            window.scrollTo(0, 0);
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[index].classList.add('active');
+
+            document.getElementById('current-q-num').innerText = index + 1;
+            progressBar.style.width = `${((index + 1) / totalQuestions) * 100}%`;
+
+            if (index >= 0 && index <= 6) {
+                readingPassage.style.display = 'block';
+            } else {
+                readingPassage.style.display = 'none';
+            }
+
+            if (index === 0) {
+                btnPrev.style.display = 'none';
+            } else {
+                btnPrev.style.display = 'block';
+            }
+
+            if (index === totalQuestions - 1) {
+                btnNext.style.display = 'none';
+                btnSubmit.style.display = 'block';
+            } else {
+                btnNext.style.display = 'block';
+                btnSubmit.style.display = 'none';
+            }
+        }
+
+        function isCurrentQuestionAnswered(index) {
+            const currentSlide = slides[index];
+            const radios = currentSlide.querySelectorAll('input[type="radio"]');
+            if (radios.length > 0) {
+                let isChecked = false;
+                radios.forEach(radio => { if (radio.checked) isChecked = true; });
+                if (!isChecked) return false;
+            }
+
+            const texts = currentSlide.querySelectorAll('input[type="text"]');
+            if (texts.length > 0) {
+                let isFilled = true;
+                texts.forEach(text => { if (text.value.trim() === "") isFilled = false; });
+                if (!isFilled) return false;
+            }
+            return true;
+        }
+
+        function nextQuestion() {
+            if (!isCurrentQuestionAnswered(currentQIndex)) {
+                alert("Please answer the question before moving to the next one.");
+                return;
+            }
+            if (currentQIndex < totalQuestions - 1) {
+                currentQIndex++;
+                showQuestion(currentQIndex);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                showQuestion(currentQIndex);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function cleanTextForMatching(text) {
+            if (!text) return "";
+            let clean = text.toLowerCase();
+            clean = clean.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?'"]/g,"");
+            clean = clean.replace(/\s+/g, '');
+            return clean;
+        }
+
+        function submitQuiz() {
+            if (!isCurrentQuestionAnswered(currentQIndex)) {
+                alert("Please answer the last question before submitting.");
+                return;
+            }
+            if (!confirm("Are you sure you want to submit your test? You cannot undo this.")) return;
+
+            btnSubmit.innerText = "Submitting... Please wait";
+            btnSubmit.disabled = true;
+
+            let correctCount = 0;
+            const correctAnswers = {
+                r1: ["b"], r2: ["c"], r3: ["a"],
+                r4: ["false"], r5: ["true"], r6: ["true"], r7: ["false"],
+                v1: ["curiosities"], v2: ["supernatural"], v3: ["scholarship"], v4: ["replenish"], v5: ["oddity"],
+                v6: ["amazing"], v7: ["lazy"], v8: ["modest"], v9: ["similar"], v10: ["praise"],
+                v11_v2: ["wrote"], v11_v3: ["written"],
+                v12_v2: ["bought"], v12_v3: ["bought"],
+                v13_v2: ["knew"], v13_v3: ["known"],
+                v14_v2: ["made"], v14_v3: ["made"],
+                g1: ["a"], g2: ["b"], g3: ["b"], g4: ["a"],
+                g5_a: ["dont water", "do not water"], g5_b: ["dies"],
+                g6_a: ["studies"], g6_b: ["will get", "gets", "willgets"], 
+                g7: ["will help", "willhelp"],
+                g8: ["will pass", "willpass"],
+                g9: ["She is reading a book"], 
+                g10: ["They are not playing football", "they aren't playing football"], 
+                g11: ["Is he writing a letter"], 
+                g12: ["When are you watching TV"], 
+                g13: ["If you mix red and blue, you get purple"], 
+                g14: ["My friend Sara lives in Cairo"], 
+                g15: ["Where is the library"], 
+                g16: ["I have a cat, a dog and a rabbit"] 
+            };
+
+            const form = document.getElementById('quiz-form');
+            const formData = new FormData(form);
+            
+            let answersData = {};
+
+            for (let [key, value] of formData.entries()) {
+                answersData[key] = value;
+                if (correctAnswers.hasOwnProperty(key)) {
+                    let studentAnsClean = cleanTextForMatching(value);
+                    let acceptedAnswers = correctAnswers[key].map(ans => cleanTextForMatching(ans));
+                    if (acceptedAnswers.includes(studentAnsClean)) {
+                        correctCount++;
+                    }
+                }
+            }
+
+            let finalScore = (correctCount / 37) * 10;
+            finalScore = Math.round(finalScore * 100) / 100;
+
+            sendToGoogleSheet(answersData, finalScore, correctCount);
+        }
+
+        function sendToGoogleSheet(answers, finalScore, correctCount) {
+            const payload = {
+                name: studentData.name,
+                score: finalScore, 
+                className: studentData.className,
+                details: `Correct: ${correctCount}/37 | Answers: ${JSON.stringify(answers)}` 
+            };
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                document.getElementById('quiz-screen').classList.remove('active');
+                document.getElementById('result-screen').classList.add('active');
+                document.getElementById('res-name').innerText = studentData.name;
+                document.getElementById('res-class').innerText = studentData.className;
+                document.getElementById('res-score').innerText = finalScore; 
+                window.scrollTo(0, 0);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("There was an issue submitting. Please try again.");
+                btnSubmit.innerText = "Submit Test 🚀";
+                btnSubmit.disabled = false;
+            });
+        }
+    </script>
+</body>
+</html>
